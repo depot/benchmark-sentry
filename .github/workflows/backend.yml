@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-       with:
+        with:
           repository: getsentry/sentry
           ref: master
           submodules: true
@@ -40,13 +40,12 @@ jobs:
             devservices logs
           fi
 
-  
   api-docs-depot:
     name: api docs test on Depot
     runs-on: depot-ubuntu-22.04
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-       with:
+        with:
           repository: getsentry/sentry
           ref: master
           submodules: true
