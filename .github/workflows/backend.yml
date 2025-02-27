@@ -36,47 +36,6 @@ jobs:
         run: |
           yarn add ts-node && make test-api-docs
 
-      - name: Inspect failure
-        if: failure()
-        run: |
-          if command -v devservices; then
-            devservices logs
-          fi
-
-  backend-test-gha:
-    name: backend test on GHA
-    runs-on: ubuntu-24.04
-    timeout-minutes: 60
-    strategy:
-      # This helps not having to run multiple jobs because one fails, thus, reducing resource usage
-      # and reducing the risk that one of many runs would turn red again (read: intermittent tests)
-      fail-fast: false
-      matrix:
-        # XXX: When updating this, make sure you also update MATRIX_INSTANCE_TOTAL.
-        instance: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        pg-version: ["14"]
-
-    env:
-      # XXX: `MATRIX_INSTANCE_TOTAL` must be hardcoded to the length of `strategy.matrix.instance`.
-      # If this increases, make sure to also increase `flags.backend.after_n_builds` in `codecov.yml`.
-      MATRIX_INSTANCE_TOTAL: 11
-
-    steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-        with:
-          repository: scylladb/scylladb
-          ref: master
-
-      - name: Setup sentry env
-        uses: ./.github/actions/setup-sentry
-        id: setup
-        with:
-          mode: backend-ci
-
-      - name: Run backend test (${{ steps.setup.outputs.matrix-instance-number }} of ${{ steps.setup.outputs.matrix-instance-total }})
-        run: |
-          make test-python-ci
-
   api-docs-depot:
     name: api docs test on Depot
     runs-on: depot-ubuntu-22.04
@@ -103,44 +62,3 @@ jobs:
         # see: https://github.com/getsentry/sentry/pull/32328/files
         run: |
           yarn add ts-node && make test-api-docs
-
-      - name: Inspect failure
-        if: failure()
-        run: |
-          if command -v devservices; then
-            devservices logs
-          fi
-
-  backend-test-depot:
-    name: backend test on Depot
-    runs-on: depot-ubuntu-22.04
-    timeout-minutes: 60
-    strategy:
-      # This helps not having to run multiple jobs because one fails, thus, reducing resource usage
-      # and reducing the risk that one of many runs would turn red again (read: intermittent tests)
-      fail-fast: false
-      matrix:
-        # XXX: When updating this, make sure you also update MATRIX_INSTANCE_TOTAL.
-        instance: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        pg-version: ["14"]
-
-    env:
-      # XXX: `MATRIX_INSTANCE_TOTAL` must be hardcoded to the length of `strategy.matrix.instance`.
-      # If this increases, make sure to also increase `flags.backend.after_n_builds` in `codecov.yml`.
-      MATRIX_INSTANCE_TOTAL: 11
-
-    steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-        with:
-          repository: scylladb/scylladb
-          ref: master
-
-      - name: Setup sentry env
-        uses: ./.github/actions/setup-sentry
-        id: setup
-        with:
-          mode: backend-ci
-
-      - name: Run backend test (${{ steps.setup.outputs.matrix-instance-number }} of ${{ steps.setup.outputs.matrix-instance-total }})
-        run: |
-          make test-python-ci
