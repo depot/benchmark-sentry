@@ -36,6 +36,49 @@ jobs:
         run: |
           yarn add ts-node && make test-api-docs
 
+  cli-gha:
+    name: cli test on GHA
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        pg-version: ["14"]
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          repository: getsentry/sentry
+          ref: master
+
+      - name: Setup sentry env
+        uses: ./.github/actions/setup-sentry
+        id: setup
+        with:
+          mode: migrations
+
+      - name: Run test
+        run: |
+          make test-cli
+
+  monolith-dbs-gha:
+    name: monolith-dbs test on GHA
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          repository: getsentry/sentry
+          ref: master
+
+      - name: Setup sentry env
+        uses: ./.github/actions/setup-sentry
+        id: setup
+        with:
+          mode: migrations
+
+      - name: Run test
+        run: |
+          make test-monolith-dbs
+
   api-docs-depot:
     name: api docs test on Depot
     runs-on: depot-ubuntu-22.04
@@ -62,3 +105,46 @@ jobs:
         # see: https://github.com/getsentry/sentry/pull/32328/files
         run: |
           yarn add ts-node && make test-api-docs
+
+  cli-depot:
+    name: cli test on Depot
+    runs-on: depot-ubuntu-22.04
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        pg-version: ["14"]
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          repository: getsentry/sentry
+          ref: master
+
+      - name: Setup sentry env
+        uses: ./.github/actions/setup-sentry
+        id: setup
+        with:
+          mode: migrations
+
+      - name: Run test
+        run: |
+          make test-cli
+
+  monolith-dbs-depot:
+    name: monolith-dbs test on Depot
+    runs-on: depot-ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          repository: getsentry/sentry
+          ref: master
+
+      - name: Setup sentry env
+        uses: ./.github/actions/setup-sentry
+        id: setup
+        with:
+          mode: migrations
+
+      - name: Run test
+        run: |
+          make test-monolith-dbs
